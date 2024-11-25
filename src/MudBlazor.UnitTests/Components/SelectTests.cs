@@ -1,9 +1,11 @@
-﻿using Bunit;
+﻿using AngleSharp.Dom;
+using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.Select;
 using NUnit.Framework;
+using static MudBlazor.UnitTests.TestComponents.Select.SelectEnumInitiated;
 using static MudBlazor.UnitTests.TestComponents.Select.SelectWithEnumTest;
 
 namespace MudBlazor.UnitTests.Components
@@ -171,6 +173,37 @@ namespace MudBlazor.UnitTests.Components
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();
             comp.WaitForAssertion(() => comp.Find("input").Attributes["value"]?.Value.Should().Be("Second"));
+        }
+
+        /// <summary>
+        /// Display Title should update even when enum uses defalut values
+        /// as seen in issue #9808
+        /// </summary>
+        [Test]
+        public void EnumWithUninitializedValuesMultiSelected()
+        {
+            var comp = Context.RenderComponent<SelectEnumInitiated>();
+            // select elements needed for the test
+            var select = comp.FindComponent<MudSelect<TestEnum>>();
+            var input = comp.Find("div.mud-input-control");
+            var displayTitle = comp.Find("div.mud-input-slot");
+
+            select.Instance.Value.Should().Be(default(TestEnum));
+            select.Instance.Text.Should().Be(default(TestEnum).ToString());
+
+            comp.Find("input").Attributes["value"]?.Value.Should().Be("Value1");
+            comp.RenderCount.Should().Be(1);
+            input.PointerDown();
+
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
+            var items = comp.FindAll("div.mud-list-item").ToArray();
+            select.Instance.Text.Should().Be("Value1");
+            displayTitle.Text().Should().Be("Value1");
+            items[2].Click();
+            items[1].Click();
+            select.Instance.Text.Should().Be("Value1, Value3, Value2");
+            displayTitle.Text().Should().Be("Value1, Value3, Value2"); 
+            comp.WaitForAssertion(() => comp.Find("input").Attributes["value"]?.Value.Should().Be("Value1, Value3, Value2"));
         }
 
         /// <summary>

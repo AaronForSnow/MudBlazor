@@ -1,0 +1,28 @@
+﻿<MudPopoverProvider />
+
+<br />
+<MudSelect T="TestEnum" MultiSelectionTextFunc="EnumMultiSelectionTextFunc" MultiSelection @bind-SelectedValues="_selectedOptions" Label="Enum Values">
+    @foreach (var option in Enum.GetValues<TestEnum>())
+    {
+        <MudSelectItem Value="@option">@option.ToString()</MudSelectItem>
+    }
+</MudSelect>
+
+@code {
+    public static string __description__ = "Initial Text should be the enum's default value.";
+
+    private IEnumerable<TestEnum> _selectedOptions { get; set; } = new List<TestEnum>() { TestEnum.Value1 };
+
+    public enum TestEnum
+    {
+        Value1,
+        Value2,
+        Value3
+    }
+
+    private string EnumMultiSelectionTextFunc(List<string> selectedValues)
+    {
+        var text = string.Join(", ", selectedValues);
+        return text;
+    }
+}
