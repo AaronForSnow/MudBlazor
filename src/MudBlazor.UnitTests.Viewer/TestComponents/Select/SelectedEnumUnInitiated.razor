@@ -1,7 +1,7 @@
 ﻿<MudPopoverProvider />
 
 <br />
-<MudSelect T="TestEnum" MultiSelectionTextFunc="EnumMultiSelectionTextFunc" MultiSelection @bind-SelectedValues="_selectedOptions" Label="Enum assigned Values" >
+<MudSelect T="TestEnum" MultiSelectionTextFunc="EnumMultiSelectionTextFunc" MultiSelection @bind-SelectedValues="_selectedOptions" Label="Enum assigned Values">
     @foreach (var option in Enum.GetValues<TestEnum>())
     {
         <MudSelectItem Value="@option">@option.ToString()</MudSelectItem>
@@ -13,19 +13,12 @@
 
     private IEnumerable<TestEnum> _selectedOptions { get; set; } = new List<TestEnum>() { TestEnum.Value1 };
 
-
-    public enum TestEnum //Assigned Values
+    public enum TestEnum //Not assigned Values
     {
-        Value1 = 1,
-        Value2 = 2,
-        Value3 = 3
+        Value1,
+        Value2,
+        Value3
     }
-    // public enum TestEnum2 //Not assigned Values
-    // {
-    //     Value1,
-    //     Value2,
-    //     Value3
-    // }
     private string EnumMultiSelectionTextFunc(List<string> selectedValues)
     {
         var text = string.Join(", ", selectedValues);

@@ -6,6 +6,7 @@ using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.Select;
 using NUnit.Framework;
 using static MudBlazor.UnitTests.TestComponents.Select.SelectEnumInitiated;
+using static MudBlazor.UnitTests.TestComponents.Select.SelectedEnumUnInitiated;
 using static MudBlazor.UnitTests.TestComponents.Select.SelectWithEnumTest;
 
 namespace MudBlazor.UnitTests.Components
@@ -182,28 +183,58 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void EnumWithUninitializedValuesMultiSelected()
         {
-            var comp = Context.RenderComponent<SelectEnumInitiated>();
+            var UninitializedComp = Context.RenderComponent<SelectedEnumUnInitiated>();
             // select elements needed for the test
-            var select = comp.FindComponent<MudSelect<TestEnum>>();
-            var input = comp.Find("div.mud-input-control");
-            var displayTitle = comp.Find("div.mud-input-slot");
 
-            select.Instance.Value.Should().Be(default(TestEnum));
-            select.Instance.Text.Should().Be(default(TestEnum).ToString());
+            var Select = UninitializedComp.FindComponent<MudSelect<SelectedEnumUnInitiated.TestEnum>>();
+            var input = UninitializedComp.Find("div.mud-input-control");
+            var displayTitle = UninitializedComp.Find("div.mud-input-slot");
 
-            comp.Find("input").Attributes["value"]?.Value.Should().Be("Value1");
-            comp.RenderCount.Should().Be(1);
+            Select.Instance.Text.Should().Be(default(SelectedEnumUnInitiated.TestEnum).ToString()); //without assigned values in Testenum '0'
+            Select.Instance.Text.Should().Be("Value1"); //with assigned values in Testenum
+
+            UninitializedComp.Find("input").Attributes["value"]?.Value.Should().Be("Value1");
+            UninitializedComp.RenderCount.Should().Be(1);
             input.PointerDown();
 
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
-            var items = comp.FindAll("div.mud-list-item").ToArray();
-            select.Instance.Text.Should().Be("Value1");
-            displayTitle.Text().Should().Be("Value1");
+            UninitializedComp.WaitForAssertion(() => UninitializedComp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
+            var items = UninitializedComp.FindAll("div.mud-list-item").ToArray();
+            Select.Instance.Text.Should().Be("Value1");
+            //displayTitle.Text().Should().Be("Value1"); // without assigned values
+            displayTitle.Text().Should().Be("Value1"); // with assigned values
             items[2].Click();
             items[1].Click();
-            select.Instance.Text.Should().Be("Value1, Value3, Value2");
+            Select.Instance.Text.Should().Be("Value1, Value3, Value2");
+            UninitializedComp.WaitForAssertion(() => UninitializedComp.Find("input").Attributes["value"]?.Value.Should().Be("Value1, Value3, Value2"));
             displayTitle.Text().Should().Be("Value1, Value3, Value2"); 
-            comp.WaitForAssertion(() => comp.Find("input").Attributes["value"]?.Value.Should().Be("Value1, Value3, Value2"));
+        }
+
+        [Test]
+        public void EnumWithInitializedValuesMultiSelected()
+        {
+            var initializedComp = Context.RenderComponent<SelectEnumInitiated>();
+            // select elements needed for the test
+            var Select1st = initializedComp.FindComponent<MudSelect<SelectEnumInitiated.TestEnum>>();
+            var input = initializedComp.Find("div.mud-input-control");
+            var displayTitle = initializedComp.Find("div.mud-input-slot");
+
+            Select1st.Instance.Value.Should().Be(default(SelectEnumInitiated.TestEnum));
+            Select1st.Instance.Text.Should().Be("Value1"); //with assigned values in Testenum
+
+            initializedComp.Find("input").Attributes["value"]?.Value.Should().Be("Value1");
+            initializedComp.RenderCount.Should().Be(1);
+            input.PointerDown();
+
+            initializedComp.WaitForAssertion(() => initializedComp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
+            var items = initializedComp.FindAll("div.mud-list-item").ToArray();
+            Select1st.Instance.Text.Should().Be("Value1");
+            displayTitle.Text().Should().Be("Value1"); // without assigned values
+            //displayTitle.Text().Should().Be(""); // with assigned values
+            items[2].Click();
+            items[1].Click();
+            Select1st.Instance.Text.Should().Be("Value1, Value3, Value2");
+            initializedComp.WaitForAssertion(() => initializedComp.Find("input").Attributes["value"]?.Value.Should().Be("Value1, Value3, Value2"));
+            displayTitle.Text().Should().Be("Value1, Value3, Value2");
         }
 
         /// <summary>
