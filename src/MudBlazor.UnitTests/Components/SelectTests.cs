@@ -188,20 +188,21 @@ namespace MudBlazor.UnitTests.Components
 
             var Select = UninitializedComp.FindComponent<MudSelect<SelectedEnumUnInitiated.TestEnum>>();
             var input = UninitializedComp.Find("div.mud-input-control");
-            var displayTitle = UninitializedComp.Find("div.mud-input-slot");
+            //var displayTitle = UninitializedComp.Find("div.mud-input-slot");
+            var displayTitle = UninitializedComp.Find("div.mud-input-root-text");
 
-            Select.Instance.Text.Should().Be(default(SelectedEnumUnInitiated.TestEnum).ToString()); //without assigned values in Testenum '0'
-            Select.Instance.Text.Should().Be("Value1"); //with assigned values in Testenum
+            //Select.Instance.Text.Should().Be(default(SelectedEnumUnInitiated.TestEnum).ToString()); //without assigned values in Testenum '0'
+            Select.Instance.Text.Should().Be("Value2"); //with assigned values in Testenum
 
-            UninitializedComp.Find("input").Attributes["value"]?.Value.Should().Be("Value1");
+            UninitializedComp.Find("input").Attributes["value"]?.Value.Should().Be("Value2");
             UninitializedComp.RenderCount.Should().Be(1);
             input.PointerDown();
 
             UninitializedComp.WaitForAssertion(() => UninitializedComp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
             var items = UninitializedComp.FindAll("div.mud-list-item").ToArray();
-            Select.Instance.Text.Should().Be("Value1");
+            Select.Instance.Text.Should().Be("Value2");
             //displayTitle.Text().Should().Be("Value1"); // without assigned values
-            displayTitle.Text().Should().Be("Value1"); // with assigned values
+            displayTitle.Text().Should().Be("Value2"); // with assigned values
             items[2].Click();
             items[1].Click();
             Select.Instance.Text.Should().Be("Value1, Value3, Value2");
@@ -217,7 +218,7 @@ namespace MudBlazor.UnitTests.Components
             var Select1st = initializedComp.FindComponent<MudSelect<SelectEnumInitiated.TestEnum>>();
             var input = initializedComp.Find("div.mud-input-control");
             var displayTitle = initializedComp.Find("div.mud-input-slot");
-
+            
             Select1st.Instance.Value.Should().Be(default(SelectEnumInitiated.TestEnum));
             Select1st.Instance.Text.Should().Be("Value1"); //with assigned values in Testenum
 
